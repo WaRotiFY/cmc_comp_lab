@@ -4,6 +4,7 @@
 #include "test.h"
 #include "my_task.h"
 
+// Функция вывода справочной информации
 void help_info(void)
 {
     printf("========================================\n");
@@ -29,34 +30,40 @@ void help_info(void)
 
 int main(int argc, char *argv[])
 {
+    // Если передан аргумент -help или -test
     if (argc >= 2) {
         if (!strcmp(argv[1], "-help")) {
-            help_info();
+            help_info();  // Вывод справки
             return 0;
         }
+
         if (!strcmp(argv[1], "-test")) {
             for (int i = 2; i < argc; i++) {
                 if (!strcmp(argv[i], "-root")) {
-                    test_root();
+                    test_root();      // Запуск теста корней
                 }
                 else if (!strcmp(argv[i], "-integral")) {
-                    test_integral();
+                    test_integral();  // Запуск теста интеграла
                 }
             }
             return 0;
         }
     }
 
+    // Флаги для отображения корней и итераций
     char print = 0;
     char iter = 0;
     for (int i = 1; i < argc; i++) {
         if (!strcmp(argv[i], "-roots")) {
-            print = 1;
+            print = 1;  // Включить вывод корней
         }
         else if (!strcmp(argv[i], "-iters")) {
-            iter = 1;
+            iter = 1;   // Включить вывод итерационного процесса
         }
     }
+
+    // Основная задача (с учётом установленных флагов)
     my_task(print, iter);
+
     return 0;
 }
