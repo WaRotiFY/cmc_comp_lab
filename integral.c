@@ -1,39 +1,56 @@
 #include <stdio.h>
 #include <math.h>
-
-// Функция для вычисления минимального чётного n,
-// необходимого для достижения заданной точности интегрирования (по формуле Симпсона)
-int calculate_min_n(double a, double b, double eps, double maxf4)
-{
-    // n >= ((b - a)^5 * max|f^(4)(x)|) / (180 * ε))^(1/4)
-    double term = pow(b - a, 5) * maxf4 / (180.0 * eps);
-    double n_f = pow(term, 0.25);
-
-    int n = (int)ceil(n_f);
-
-    if (n % 2 != 0) {
-        n++;
-    }
-
-    // Минимум 2 разбиения
-    return n < 2 ? 2 : n;
-}
+#include <float.h>
+#include "list.h"
 
 // Функция вычисления определённого интеграла функции f от a до b с заданной точностью eps по формуле Симпсона
-double integral(double (*f)(double), double a, double b, double eps, double maxf4)
+double integral(double (*f)(double), double a, double b, double eps)
 {
-    int n = calculate_min_n(a, b, eps, maxf4); 
-    double step = (b - a) / n;                 
-    double ans = 0;                            
-    double x1 = a;
-    double x2 = a;
+    // last_data — значения функции в точках до удвоения числа отрезков
+    // cur_data — значения функции в точках после удвоения числа отрезков
+    DoubleList *last_data = init();
+    DoubleList *cur_data = init();
+    reset(last_data, f(a), 0);
+    reset(last_data, f((a + b) / 2), 1);
+    reset(last_data, f(b), 2);
 
-    // Вычисление суммы по формуле Симпсона на каждом отрезке
-    for (int i = 0; i < n; i++) {
-        x2 += step;
-        ans += (x2 - x1) / 6.0 * (f(x1) + 4.0 * f((x1 + x2) / 2) + f(x2));
-        x1 += step;
-    }
+    int n = 2;
+    double step;                 
+    double In = 0;
+    double I2n = DBL_MAX;
+    
+    // Цикл на каждом шаге увеличивает число разбиений в два раза,
+    // выполнятся до момента |I2n - In| < eps (справедливо, так как |I2n - In| ~ |I - I2n|)
+    do {
+        double x1 = a;
+        double x2 = a;
+        step = (b - a) / n;
+        In = I2n;
+        I2n = 0;
 
-    return ans;
+        // Вычисление суммы по формуле Симпсона на каждом отрезке
+        for (int i = 0; i < n; i++) {
+            x2 += step;
+
+            double f_left = get(last_data, i);
+            reset(cur_data, f_left, 2 * i );
+            double f_right = get(last_data, i + 1);
+            reset(cur_data, f_right, 2 * (i + 1));
+            double f_mid = f((x1 + x2) / 2.0);
+            reset(cur_data, f_mid, 2 * i + 1);
+
+            I2n += (x2 - x1) / 6.0 * (f_left + 4.0 * f_mid + f_right);
+
+            x1 += step;
+        }
+        n *= 2;
+        
+        DoubleList *temp = cur_data;
+        cur_data = last_data;
+        last_data = temp;
+    } while (fabs(I2n - In) >= eps);
+
+    destroy(cur_data);
+    destroy(last_data);
+    return I2n;
 }
