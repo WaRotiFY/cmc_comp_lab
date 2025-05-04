@@ -43,6 +43,6 @@ void test_integral(void)
     scanf("%lf", &eps);
 
     // Вычисление определённого интеграла
-    printf("Integral: %lf\n", integral(funcs_pack[funcNum], a, b, eps, 10)); // 10 - константа для точности вычислений
+    printf("Integral: %lf\n", integral(funcs_pack[funcNum], a, b, eps));
     printf("------------------------------\n");
 }

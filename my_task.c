@@ -4,22 +4,7 @@
 #include "integral.h"
 #include "funcs.h"
 
-// Четвёртые производные функций f1
-double d4f1(double x) {
-    return 1152.0 / pow((2 * x + 2), 5);
-}
-
-// Четвёртые производные функций f2
-double d4f2(double x) {
-    return 0;
-}
-
-// Четвёртые производные функций f3
-double d4f3(double x) {
-    return 120.0 / pow(x, 5);
-}
-
-// оиск корней, вычисление интегралов
+// Поиск корней, вычисление интегралов
 void my_task(char print, char iter)
 {
     double eps1 = 0.0001;  // точность для нахождения корней
@@ -47,9 +32,9 @@ void my_task(char print, char iter)
     printf("------------------------------\n");
     printf("Calculation of the integral...\n");
 
-    double integral1 = integral(f1, x1, x3, eps2, d4f1(x1));
-    double integral2 = integral(f2, x2, x3, eps2, d4f2(x2));
-    double integral3 = integral(f3, x1, x2, eps2, d4f3(x1));
+    double integral1 = integral(f1, x1, x3, eps2);
+    double integral2 = integral(f2, x2, x3, eps2);
+    double integral3 = integral(f3, x1, x2, eps2);
 
     // Итоговая формула задачи — разность площадей под кривыми
     double integral = integral1 - integral2 - integral3;

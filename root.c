@@ -69,7 +69,7 @@ double root(double (*f1)(double), double (*f2)(double),
                 a = c;
             }
         }
-    } while (cycle += 1, fabs(f(combFunc, c)) > eps); 
+    } while (cycle += 1, f(combFunc, c) * f(combFunc, c - eps) > 0 && f(combFunc, c) * f(combFunc, c + eps) > 0); 
 
     // При тесте для вывода корней
     if (print) {
