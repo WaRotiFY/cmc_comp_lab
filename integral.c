@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <math.h>
+#include <float.h>
 
 // Функция вычисления определённого интеграла функции f от a до b с заданной точностью eps по формуле Симпсона
 double integral(double (*f)(double), double a, double b, double eps)
@@ -7,7 +8,7 @@ double integral(double (*f)(double), double a, double b, double eps)
     int n = 2;
     double step;                 
     double In = 0;
-    double I2n = 0;
+    double I2n = DBL_MAX;
     
     // Цикл на каждом шаге увеличивает число разбиений в два раза,
     // выполнятся до момента |I2n - In| < eps (справедливо, так как |I2n - In| ~ |I - I2n|)
